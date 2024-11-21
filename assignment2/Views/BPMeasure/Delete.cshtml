@@ -1,0 +1,20 @@
+@model assignment1.Models.BPMeasureModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Confirm Deletion ?</h3>
+<h3>  @Model.Systolic.ToString("F0")/  @Model.Diastolic.ToString("F0") mmhg (TAKEN ON  @Html.DisplayFor(model => model.MeasurementDate))</h3>
+<div>
+    
+
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

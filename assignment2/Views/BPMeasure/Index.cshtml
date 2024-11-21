@@ -1,0 +1,123 @@
+@model IEnumerable<assignment1.Models.BPMeasureModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h1>Blood Pressure Readings</h1>
+
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">
+            @successMessage
+        </div>
+    }
+}
+
+<p>
+    <a asp-action="Create">Add new BP measurement</a> | 
+    <a asp-action="Index">Information On BP measurement</a>
+</p>
+
+<form method="get">
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select name="category" class="form-control">
+            <option value="">Select a category</option>
+            @foreach (var categoryOption in ViewBag.Categories)
+            {
+                <option value="@categoryOption"
+                        selected="@(categoryOption.Equals(ViewData["Category"]?.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : "")">
+                    @categoryOption
+                </option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <!-- Reading Column -->
+            <th>Reading</th>
+
+            <!-- Systolic Column with Sort Button -->
+            <th>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", new { sort = ViewData["Sort"], type = "systolic", category = ViewData["Category"] })'">
+                    By Systolic
+                    @if (ViewData["SortType"]?.ToString() == "systolic")
+                    {
+                        <span>@(ViewData["Sort"]?.ToString() == "asc" ? "↑" : "↓")</span>
+                    }
+                </button>
+            </th>
+
+            <!-- Diastolic Column with Sort Button -->
+            <th>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", new { sort = ViewData["Sort"], type = "diastolic", category = ViewData["Category"] })'">
+                    By Diastolic
+                    @if (ViewData["SortType"]?.ToString() == "diastolic")
+                    {
+                        <span>@(ViewData["Sort"]?.ToString() == "asc" ? "↑" : "↓")</span>
+                    }
+                </button>
+            </th>
+
+            <!-- Category Column -->
+            <th>Category</th>
+
+            <!-- Position Column -->
+            <th>Position</th>
+
+            <!-- Date Taken Column -->
+            <th>
+                <a asp-action="Index" asp-route-sort="@ViewData["Sort"]" asp-route-type="date" asp-route-category="@ViewData["Category"]">
+                    Date Taken
+                    @if (ViewData["SortType"]?.ToString() == "date")
+                    {
+                        <span>@(ViewData["Sort"]?.ToString() == "asc" ? "↑" : "↓")</span>
+                    }
+                </a>
+            </th>
+
+            <!-- Actions Column -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td style="color: @(item.Category == "Normal" ? "darkgreen" :
+                                      item.Category == "Elevated" ? "blue" :
+                                      item.Category == "Hypertension Stage 1" ? "orange" :
+                                      item.Category == "Hypertension Stage 2" ? "red" :
+                                      item.Category == "Hypertensive Crisis" ? "darkred" :
+                                      "black")">
+                    @(item.Systolic.ToString("F0")) / @(item.Diastolic.ToString("F0")) mmHg
+                </td>
+                <td>
+                </td>
+                <td></td>
+               <td style="color: @(item.Category == "Normal" ? "darkgreen" :
+                                  item.Category == "Elevated" ? "blue" :
+                                  item.Category == "Hypertension Stage 1" ? "orange" :
+                                  item.Category == "Hypertension Stage 2" ? "red" :
+                                  item.Category == "Hypertensive Crisis" ? "darkred" :
+                                  "black")">
+                    @item.Category
+
+             </td>
+                <td>@Html.DisplayFor(modelItem => item.position.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.MeasurementDate)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
